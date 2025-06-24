@@ -1,7 +1,7 @@
 const config = {
     type: Phaser.WEBGL,
-    width: 800,
-    height: 600,
+    width: 960,
+    height: 640,
     scale: {
     autoCenter: Phaser.Scale.CENTER_BOTH, // Center both horizontally and vertically
     // Optional:
