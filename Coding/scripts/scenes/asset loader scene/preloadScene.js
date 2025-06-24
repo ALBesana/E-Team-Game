@@ -4,7 +4,15 @@ class preloadScene extends Phaser.Scene {
     }
     
     preload() {
+        // Menu loader
         this.load.image('menuBg', 'assets/images/backgrounds/Green.png');
+        this.load.image('menuBg1', 'assets/images/backgrounds/Background - Menu.png');
+        this.load.image('gameTitle', 'assets/images/UI/Title - Menu.png');
+        this.load.image('startBtn', 'assets/images/UI/Start Button - Menu.png');
+        this.load.image('statsBtn', 'assets/images/UI/Stats Button - Menu.png');
+        this.load.image('creditBtn', 'assets/images/UI/Credits - Menu.png');
+        this.load.image('settingsBtn', 'assets/images/UI/Settings Menu - Menu.png');
+        this.load.image('exitBtn', 'assets/images/UI/Exit - Menu.png');
     }
 
     create() {
