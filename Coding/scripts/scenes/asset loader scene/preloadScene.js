@@ -14,6 +14,8 @@ class preloadScene extends Phaser.Scene {
         this.load.image('settingsBtn', 'assets/images/UI/Settings Menu - Menu.png');
         this.load.image('exitBtn', 'assets/images/UI/Exit - Menu.png');
         this.load.image('ground', 'assets/images/platform/platform.png');
+        this.load.image('character', 'assets/images/characters/character.png')
+        this.load.image('object', 'assets/images/characters/object.png')
     }
 
     create() {

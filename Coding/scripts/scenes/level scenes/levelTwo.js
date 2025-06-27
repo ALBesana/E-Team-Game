@@ -1,6 +1,6 @@
-class levelOne extends Phaser.Scene {
+class levelTwo extends Phaser.Scene {
     constructor() {
-        super({ key: 'levelOne' });
+        super({ key: 'levelTwo' });
     }
 
     create() {
@@ -62,15 +62,6 @@ class levelOne extends Phaser.Scene {
         this.physics.add.existing(this.deathZone, true);
         this.physics.add.overlap(this.player, this.deathZone, this.onPlayerDeath, null, this);
 
-        // Win object
-        this.winObject = this.physics.add.sprite(4964.13, 510.8, 'object')
-    .setImmovable(true)
-    .setScale(1);
-
-this.winObject.body.setAllowGravity(false); // Prevent it from falling
-
-this.physics.add.overlap(this.player, this.winObject, this.onPlayerWin, null, this);
-
         // Controls
         this.keys = this.input.keyboard.addKeys({
             up: Phaser.Input.Keyboard.KeyCodes.W,
@@ -103,6 +94,7 @@ this.physics.add.overlap(this.player, this.winObject, this.onPlayerWin, null, th
             0.6
         );
 
+        // === YOU DIED! ===
         const gameOverText = this.add.text(this.cameras.main.scrollX + this.scale.width / 2, 200, 'YOU DIED!', {
             fontFamily: 'Agency FB',
             fontSize: '64px',
@@ -113,13 +105,14 @@ this.physics.add.overlap(this.player, this.winObject, this.onPlayerWin, null, th
         const gameOverBG = this.add.graphics().setDepth(0);
         gameOverBG.fillStyle(0x5e0404, 1);
         gameOverBG.fillRoundedRect(
-            gameOverText.getBounds().x,
-            gameOverText.getBounds().y,
-            gameOverText.width,
-            gameOverText.height,
-            20
+        gameOverText.getBounds().x,
+        gameOverText.getBounds().y,
+        gameOverText.width,
+        gameOverText.height,
+        20
         );
 
+        // === RETRY BUTTON ===
         const retryButton = this.add.text(this.cameras.main.scrollX + this.scale.width / 2, 300, 'Retry', {
             fontFamily: 'Agency FB',
             fontSize: '28px',
@@ -130,17 +123,18 @@ this.physics.add.overlap(this.player, this.winObject, this.onPlayerWin, null, th
         const retryBG = this.add.graphics().setDepth(0);
         retryBG.fillStyle(0x00118c, 1);
         retryBG.fillRoundedRect(
-            retryButton.getBounds().x,
-            retryButton.getBounds().y,
-            retryButton.width,
-            retryButton.height,
-            15
+        retryButton.getBounds().x,
+        retryButton.getBounds().y,
+        retryButton.width,
+        retryButton.height,
+        15
         );
 
         retryButton.on('pointerdown', () => {
-            this.scene.start('levelOne');
+            his.scene.start('levelTwo');
         });
 
+        // === MAIN MENU BUTTON ===
         const mainMenuButton = this.add.text(this.cameras.main.scrollX + this.scale.width / 2, 365, 'Return to Main Menu', {
             fontFamily: 'Agency FB',
             fontSize: '28px',
@@ -151,95 +145,18 @@ this.physics.add.overlap(this.player, this.winObject, this.onPlayerWin, null, th
         const menuBG = this.add.graphics().setDepth(0);
         menuBG.fillStyle(0xa10000, 1);
         menuBG.fillRoundedRect(
-            mainMenuButton.getBounds().x,
-            mainMenuButton.getBounds().y,
-            mainMenuButton.width,
-            mainMenuButton.height,
-            15
+        mainMenuButton.getBounds().x,
+        mainMenuButton.getBounds().y,
+        mainMenuButton.width,
+        mainMenuButton.height,
+        15
         );
 
         mainMenuButton.on('pointerdown', () => {
             this.scene.start('mainMenu');
         });
+
     }
-
-    onPlayerWin() {
-        this.backHolder.setVisible(false).disableInteractive();
-        if (this.isGameOver) return;
-        this.isGameOver = true;
-
-        this.player.setVelocity(0, 0);
-        this.player.setVisible(false);
-
-        const overlay = this.add.rectangle(
-            this.cameras.main.scrollX + this.scale.width / 2,
-            this.scale.height / 2,
-            this.scale.width,
-            this.scale.height,
-            0x000000,
-            0.6
-        );
-
-        const winText = this.add.text(this.cameras.main.scrollX + this.scale.width / 2, 200, 'YOU WON!', {
-            fontFamily: 'Agency FB',
-            fontSize: '64px',
-            color: '#00ff00',
-            padding: { x: 20, y: 10 }
-        }).setOrigin(0.5).setDepth(1);
-
-        const winBG = this.add.graphics().setDepth(0);
-        winBG.fillStyle(0x044b05, 1);
-        winBG.fillRoundedRect(
-            winText.getBounds().x,
-            winText.getBounds().y,
-            winText.width,
-            winText.height,
-            20
-        );
-
-        const menuButton = this.add.text(this.cameras.main.scrollX + this.scale.width / 2, 365, 'Return to Main Menu', {
-            fontFamily: 'Agency FB',
-            fontSize: '28px',
-            color: '#ffffff',
-            padding: { x: 20, y: 10 }
-        }).setOrigin(0.5).setInteractive().setDepth(1);
-
-        const menuBG = this.add.graphics().setDepth(0);
-        menuBG.fillStyle(0xa10000, 1);
-        menuBG.fillRoundedRect(
-            menuButton.getBounds().x,
-            menuButton.getBounds().y,
-            menuButton.width,
-            menuButton.height,
-            15
-        );
-
-        menuButton.on('pointerdown', () => {
-            this.scene.start('mainMenu');
-        });
-
-        const nextLevelButton = this.add.text(this.cameras.main.scrollX + this.scale.width / 2, 300, 'Next Level', {
-            fontFamily: 'Agency FB',
-            fontSize: '28px',
-            color: '#ffffff',
-            padding: { x: 20, y: 10 }
-        }).setOrigin(0.5).setInteractive().setDepth(1);
-
-        const nextBG = this.add.graphics().setDepth(0);
-        nextBG.fillStyle(0x004dff, 1);
-        nextBG.fillRoundedRect(
-            nextLevelButton.getBounds().x,
-            nextLevelButton.getBounds().y,
-            nextLevelButton.width,
-            nextLevelButton.height,
-            15
-        );
-
-        nextLevelButton.on('pointerdown', () => {
-            this.scene.start('levelTwo');
-        });
-    }
-
     update() {
         if (this.isGameOver) return;
 
