@@ -13,6 +13,7 @@ class preloadScene extends Phaser.Scene {
         this.load.image('creditBtn', 'assets/images/UI/Credits - Menu.png');
         this.load.image('settingsBtn', 'assets/images/UI/Settings Menu - Menu.png');
         this.load.image('exitBtn', 'assets/images/UI/Exit - Menu.png');
+        this.load.image('ground', 'assets/images/platform/platform.png');
     }
 
     create() {
