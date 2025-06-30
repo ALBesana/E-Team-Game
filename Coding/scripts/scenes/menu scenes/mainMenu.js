@@ -4,40 +4,79 @@ class mainMenu extends Phaser.Scene {
     }
 
     create() {
-        this.menuBackground = this.add.tileSprite(0, 0, 1052, 744, 'menuBg1').setScale(0.92).setOrigin(0, 0);
+        const setupButton = (button, originalScale, targetScene) => {
+            button.setScale(originalScale).setInteractive();
+
+            button.on('pointerover', () => {
+                button.setScale(originalScale * 1.1);
+            });
+
+            button.on('pointerout', () => {
+                button.setScale(originalScale);
+                button.clearTint();
+            });
+
+            button.on('pointerdown', () => {
+                button.setTint(0x999999);
+                this.sound.play('clickSFX', { volume: 0.5 });
+
+                this.time.delayedCall(150, () => {
+                    if (targetScene) this.scene.start(targetScene);
+                });
+            });
+
+            button.on('pointerup', () => {
+                button.clearTint();
+            });
+        };
+
+        this.menuBackground = this.add.image(0, 0, 'menuBg1').setScale(0.92).setOrigin(0, 0);
         this.menuTitle = this.add.image(this.scale.width / 3.15, 125, 'gameTitle').setScale(0.72);
 
-        this.menuStart = this.add.image(this.scale.width / 5, 280, 'startBtn').setScale(0.093).setInteractive();
-        this.menuStart.on('pointerdown', () => {
-            this.time.delayedCall(150, () => {
-                this.scene.start('levelOne');
-            });
-        });
+        setupButton(this.add.image(this.scale.width / 5, 275, 'startBtn'), 0.092, 'levelOne');
+        // this.menuStart.on('pointerdown', () => {
+        //     this.sound.play('clickSFX', {volume: 0.5});
+            
+        //     this.time.delayedCall(150, () => {
+        //         this.scene.start('levelOne');
+        //     });
+        // });
 
-        this.menuStats = this.add.image(190, 405, 'statsBtn').setScale(0.093).setInteractive();
-        this.menuStats.on('pointerdown', () => {
-            this.time.delayedCall(150, () => {
-                this.scene.start('statsScene');
-            });
-        });
+        setupButton(this.add.image(190, 405, 'statsBtn'), 0.092, 'statsScene');
+        // this.menuStats.on('pointerdown', () => {
+        //     this.sound.play('clickSFX', {volume: 0.5});
 
-        this.menuCreds = this.add.image(230, 534, 'creditBtn').setScale(0.38).setInteractive();
-        this.menuCreds.on('pointerdown', () => {
-            this.time.delayedCall(150, () => {
-                this.scene.start('creditsScene');
-            });
-        });
+        //     this.time.delayedCall(150, () => {
+        //         this.scene.start('statsScene');
+        //     });
+        // });
 
-        this.menuSettings = this.add.image(845, 600, 'settingsBtn').setScale(0.09).setInteractive();
-        this.menuSettings.on('pointerdown', () => {
-            this.time.delayedCall(150, () => {
-                this.scene.start('settingsScene');
-            });
-        });
+        setupButton(this.add.image(230, 533, 'creditBtn'), 0.37, 'creditsScene');
+        // this.menuCreds.on('pointerdown', () => {
+        //     this.sound.play('clickSFX', {volume: 0.5});
 
-        this.menuExit = this.add.image(900, 600, 'exitBtn').setScale(0.11).setInteractive();
-        this.menuExit.on('pointerdown', () => {
+        //     this.time.delayedCall(150, () => {
+        //         this.scene.start('creditsScene');
+        //     });
+        // });
+
+        setupButton(this.add.image(845, 630, 'settingsBtn'), 0.09, 'settingsScene');
+        // this.menuSettings.on('pointerdown', () => {
+        //     this.sound.play('clickSFX', {volume: 0.5});
+
+        //     this.time.delayedCall(150, () => {
+        //         this.scene.start('settingsScene');
+        //     });
+        // });
+
+        const exitBtn = this.add.image(900, 630, 'exitBtn');
+        setupButton(exitBtn, 0.11, null);
+
+        exitBtn.on('pointerdown', () => {
+            this.sound.play('clickSFX', { volume: 0.5 });
+            music.stop();
             alert('You have quit the game.');
+
             this.time.delayedCall(150, () => {
                 this.add.rectangle(
                     this.scale.width / 2,
@@ -62,6 +101,17 @@ class mainMenu extends Phaser.Scene {
                 this.sys.game.loop.stop();
             });
         });
+
+        let music = this.registry.get('currentMusic');
+        if (!music || !music.isPlaying || music.key !== 'menuMusic') {
+            if (music && music.isPlaying) {
+                music.stop();
+            }
+
+            music = this.sound.add('menuMusic', { loop: true, volume: 0.3 });
+            music.play();
+            this.registry.set('currentMusic', music);
+        }
     }
 
     update() {

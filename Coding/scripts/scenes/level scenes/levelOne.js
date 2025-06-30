@@ -63,13 +63,11 @@ class levelOne extends Phaser.Scene {
         this.physics.add.overlap(this.player, this.deathZone, this.onPlayerDeath, null, this);
 
         // Win object
-        this.winObject = this.physics.add.sprite(4964.13, 510.8, 'object')
-    .setImmovable(true)
-    .setScale(1);
+        this.winObject = this.physics.add.sprite(4964.13, 510.8, 'object').setImmovable(true).setScale(1);
 
-this.winObject.body.setAllowGravity(false); // Prevent it from falling
+        this.winObject.body.setAllowGravity(false); // Prevent it from falling
 
-this.physics.add.overlap(this.player, this.winObject, this.onPlayerWin, null, this);
+        this.physics.add.overlap(this.player, this.winObject, this.onPlayerWin, null, this);
 
         // Controls
         this.keys = this.input.keyboard.addKeys({
@@ -84,6 +82,20 @@ this.physics.add.overlap(this.player, this.winObject, this.onPlayerWin, null, th
 
         // Game Over flag
         this.isGameOver = false;
+
+        let currentMusic = this.registry.get('currentMusic');
+
+        if (currentMusic && currentMusic.isPlaying && currentMusic.key !== 'gameMusic') {
+            currentMusic.stop();
+        }
+
+        if (!currentMusic || currentMusic.key !== 'gameMusic') {
+            currentMusic = this.sound.add('gameMusic', { loop: true, volume: 0.3 });
+            currentMusic.play();
+            this.registry.set('currentMusic', currentMusic);
+        } else if (!currentMusic.isPlaying) {
+            currentMusic.play();
+        }
     }
 
     onPlayerDeath() {
