@@ -51,7 +51,7 @@ class mainMenu extends Phaser.Scene {
         //     });
         // });
 
-        
+        setupButton(this.add.image(230, 533, 'creditBtn'), 0.37, 'creditsScene');
         // this.menuCreds.on('pointerdown', () => {
         //     this.sound.play('clickSFX', {volume: 0.5});
 
