@@ -16,7 +16,7 @@ const config = {
             debug: false
         }
     },
-    scene: [ preloadScene, mainMenu, statsScene, creditsScene, settingsScene, levelOne, levelTwo ]
+    scene: [ preloadScene, mainMenu, statsScene, creditsScene, settingsScene, levelOne, levelTwo,levelSelector,levelThree ]
 };
 
 let game = new Phaser.Game(config);

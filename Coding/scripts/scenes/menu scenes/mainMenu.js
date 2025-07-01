@@ -33,7 +33,7 @@ class mainMenu extends Phaser.Scene {
         this.menuBackground = this.add.image(0, 0, 'menuBg1').setScale(0.92).setOrigin(0, 0);
         this.menuTitle = this.add.image(this.scale.width / 3.15, 125, 'gameTitle').setScale(0.72);
 
-        setupButton(this.add.image(this.scale.width / 5, 275, 'startBtn'), 0.092, 'levelOne');
+        setupButton(this.add.image(this.scale.width / 5, 275, 'startBtn'), 0.092, 'levelSelector');
         // this.menuStart.on('pointerdown', () => {
         //     this.sound.play('clickSFX', {volume: 0.5});
             
@@ -51,7 +51,7 @@ class mainMenu extends Phaser.Scene {
         //     });
         // });
 
-        setupButton(this.add.image(230, 533, 'creditBtn'), 0.37, 'creditsScene');
+        
         // this.menuCreds.on('pointerdown', () => {
         //     this.sound.play('clickSFX', {volume: 0.5});
 
