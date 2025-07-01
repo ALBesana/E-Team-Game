@@ -5,43 +5,56 @@ class levelTwo extends Phaser.Scene {
 
     create() {
         // Background
-        this.gameBackground = this.add.tileSprite(0, 0, 5000, this.scale.height, 'levelOneBG').setOrigin(0, 0);
+        this.gameBackground = this.add.tileSprite(0, 0, 10000, this.scale.height, 'levelOneBG').setOrigin(0, 0);
 
-        // Exit button
-        this.backHolder = this.add.image(this.scale.width / 1.025, 620, 'exitBtn')
-            .setScrollFactor(0)
-            .setScale(0.08)
-            .setInteractive();
-        this.backHolder.on('pointerdown', () => {
-            this.time.delayedCall(150, () => {
-                this.scene.start('mainMenu');
+        // Reusable button setup
+        const setupButton = (button, originalScale, targetScene) => {
+            button.setScale(originalScale).setInteractive();
+
+            button.on('pointerover', () => {
+                button.setScale(originalScale * 1.1);
             });
-        });
+
+            button.on('pointerout', () => {
+                button.setScale(originalScale);
+                button.clearTint();
+            });
+
+            button.on('pointerdown', () => {
+                button.setTint(0x999999);
+                this.sound.play('clickSFX', { volume: 0.5 });
+
+                this.time.delayedCall(150, () => {
+                    if (targetScene) this.scene.start(targetScene);
+                });
+            });
+
+            button.on('pointerup', () => {
+                button.clearTint();
+            });
+        };
+
+        // Exit Button (hover/click fx)
+        this.backHolder = this.add.image(this.scale.width / 1.025, 620, 'exitBtn').setScrollFactor(0);
+        setupButton(this.backHolder, 0.08, 'mainMenu');
 
         // Platforms with gaps
         this.platforms = this.physics.add.staticGroup();
 
-        const ground1 = this.add.tileSprite(100, 590, 1000, 120, 'ground');
-        this.physics.add.existing(ground1, true);
-        this.platforms.add(ground1);
+        const groundSpecs = [
+            [100, 610, 1000], [1150, 610, 400], [1600, 610, 800], [2500, 610, 600],
+            [3200, 610, 1000], [4300, 610, 600], [5100, 610, 700], [6000, 610, 500],
+            [6700, 610, 1200], [8100, 610, 400], [8600, 610, 600], [9300, 610, 800],
+            [10200, 610, 400]
+        ];
 
-        const ground2 = this.add.tileSprite(1000, 590, 400, 120, 'ground');
-        this.physics.add.existing(ground2, true);
-        this.platforms.add(ground2);
+        groundSpecs.forEach(([x, y, width]) => {
+            const ground = this.add.tileSprite(x, y, width, 120, 'ground');
+            this.physics.add.existing(ground, true);
+            this.platforms.add(ground);
+        });
 
-        const ground3 = this.add.tileSprite(1820, 590, 800, 120, 'ground');
-        this.physics.add.existing(ground3, true);
-        this.platforms.add(ground3);
-
-        const ground4 = this.add.tileSprite(2700, 590, 600, 120, 'ground');
-        this.physics.add.existing(ground4, true);
-        this.platforms.add(ground4);
-
-        const ground5 = this.add.tileSprite(4130, 590, 1800, 120, 'ground');
-        this.physics.add.existing(ground5, true);
-        this.platforms.add(ground5);
-
-        const obstacle1 = this.add.tileSprite(4130, 510, 310, 120, 'ground');
+        const obstacle1 = this.add.tileSprite(4130, 530, 310, 120, 'ground');
         this.physics.add.existing(obstacle1, true);
         this.platforms.add(obstacle1);
 
@@ -51,14 +64,14 @@ class levelTwo extends Phaser.Scene {
             .setScale(1.2);
 
         this.cameras.main.startFollow(this.player);
-        this.cameras.main.setBounds(0, 0, 5000, this.scale.height);
-        this.physics.world.setBounds(0, 0, 5000, this.scale.height);
+        this.cameras.main.setBounds(0, 0, 10000, this.scale.height);
+        this.physics.world.setBounds(0, 0, 10000, this.scale.height);
 
         // Collisions
         this.physics.add.collider(this.player, this.platforms);
 
-        // Invisible kill zone at the bottom
-        this.deathZone = this.add.rectangle(2500, this.scale.height + 10, 5000, 30, 0xff0000, 0); // Invisible
+        // Extended Kill Zone (death area)
+        this.deathZone = this.add.rectangle(5000, this.scale.height + 10, 10000, 30, 0xff0000, 0);
         this.physics.add.existing(this.deathZone, true);
         this.physics.add.overlap(this.player, this.deathZone, this.onPlayerDeath, null, this);
 
@@ -70,10 +83,8 @@ class levelTwo extends Phaser.Scene {
             right: Phaser.Input.Keyboard.KeyCodes.D
         });
 
-        // Bring UI on top
         this.children.bringToTop(this.backHolder);
 
-        // Game Over flag
         this.isGameOver = false;
     }
 
@@ -81,6 +92,8 @@ class levelTwo extends Phaser.Scene {
         this.backHolder.setVisible(false).disableInteractive();
         if (this.isGameOver) return;
         this.isGameOver = true;
+
+        this.sound.play('death_sound', { volume: 0.5 });
 
         this.player.setVelocity(0, 0);
         this.player.setVisible(false);
@@ -94,7 +107,6 @@ class levelTwo extends Phaser.Scene {
             0.6
         );
 
-        // === YOU DIED! ===
         const gameOverText = this.add.text(this.cameras.main.scrollX + this.scale.width / 2, 200, 'YOU DIED!', {
             fontFamily: 'Agency FB',
             fontSize: '64px',
@@ -105,14 +117,13 @@ class levelTwo extends Phaser.Scene {
         const gameOverBG = this.add.graphics().setDepth(0);
         gameOverBG.fillStyle(0x5e0404, 1);
         gameOverBG.fillRoundedRect(
-        gameOverText.getBounds().x,
-        gameOverText.getBounds().y,
-        gameOverText.width,
-        gameOverText.height,
-        20
+            gameOverText.getBounds().x,
+            gameOverText.getBounds().y,
+            gameOverText.width,
+            gameOverText.height,
+            20
         );
 
-        // === RETRY BUTTON ===
         const retryButton = this.add.text(this.cameras.main.scrollX + this.scale.width / 2, 300, 'Retry', {
             fontFamily: 'Agency FB',
             fontSize: '28px',
@@ -123,18 +134,17 @@ class levelTwo extends Phaser.Scene {
         const retryBG = this.add.graphics().setDepth(0);
         retryBG.fillStyle(0x00118c, 1);
         retryBG.fillRoundedRect(
-        retryButton.getBounds().x,
-        retryButton.getBounds().y,
-        retryButton.width,
-        retryButton.height,
-        15
+            retryButton.getBounds().x,
+            retryButton.getBounds().y,
+            retryButton.width,
+            retryButton.height,
+            15
         );
 
         retryButton.on('pointerdown', () => {
-            his.scene.start('levelTwo');
+            this.scene.start('levelTwo');
         });
 
-        // === MAIN MENU BUTTON ===
         const mainMenuButton = this.add.text(this.cameras.main.scrollX + this.scale.width / 2, 365, 'Return to Main Menu', {
             fontFamily: 'Agency FB',
             fontSize: '28px',
@@ -145,18 +155,18 @@ class levelTwo extends Phaser.Scene {
         const menuBG = this.add.graphics().setDepth(0);
         menuBG.fillStyle(0xa10000, 1);
         menuBG.fillRoundedRect(
-        mainMenuButton.getBounds().x,
-        mainMenuButton.getBounds().y,
-        mainMenuButton.width,
-        mainMenuButton.height,
-        15
+            mainMenuButton.getBounds().x,
+            mainMenuButton.getBounds().y,
+            mainMenuButton.width,
+            mainMenuButton.height,
+            15
         );
 
         mainMenuButton.on('pointerdown', () => {
             this.scene.start('mainMenu');
         });
-
     }
+
     update() {
         if (this.isGameOver) return;
 

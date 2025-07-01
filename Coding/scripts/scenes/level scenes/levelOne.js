@@ -7,41 +7,56 @@ class levelOne extends Phaser.Scene {
         // Background
         this.gameBackground = this.add.tileSprite(0, 0, 5000, this.scale.height, 'levelOneBG').setOrigin(0, 0);
 
+        // Button setup function
+        const setupButton = (button, originalScale, targetScene) => {
+            button.setScale(originalScale).setInteractive();
+
+            button.on('pointerover', () => {
+                button.setScale(originalScale * 1.1);
+            });
+
+            button.on('pointerout', () => {
+                button.setScale(originalScale);
+                button.clearTint();
+            });
+
+            button.on('pointerdown', () => {
+                button.setTint(0x999999);
+                this.sound.play('clickSFX', { volume: 0.5 });
+
+                this.time.delayedCall(150, () => {
+                    if (targetScene) this.scene.start(targetScene);
+                });
+            });
+
+            button.on('pointerup', () => {
+                button.clearTint();
+            });
+        };
+
         // Exit button
         this.backHolder = this.add.image(this.scale.width / 1.025, 620, 'exitBtn')
-            .setScrollFactor(0)
-            .setScale(0.08)
-            .setInteractive();
-        this.backHolder.on('pointerdown', () => {
-            this.time.delayedCall(150, () => {
-                this.scene.start('mainMenu');
-            });
-        });
+            .setScrollFactor(0);
+        setupButton(this.backHolder, 0.08, 'mainMenu');
 
-        // Platforms with gaps
+        // Platforms with gaps (refactored with loop)
         this.platforms = this.physics.add.staticGroup();
 
-        const ground1 = this.add.tileSprite(100, 590, 1000, 120, 'ground');
-        this.physics.add.existing(ground1, true);
-        this.platforms.add(ground1);
+        const groundSpecs = [
+            [100, 610, 1000],
+            [1000, 610, 400],
+            [1820, 610, 800],
+            [2700, 610, 600],
+            [4130, 610, 1800]
+        ];
 
-        const ground2 = this.add.tileSprite(1000, 590, 400, 120, 'ground');
-        this.physics.add.existing(ground2, true);
-        this.platforms.add(ground2);
+        groundSpecs.forEach(([x, y, width]) => {
+            const ground = this.add.tileSprite(x, y, width, 120, 'ground');
+            this.physics.add.existing(ground, true);
+            this.platforms.add(ground);
+        });
 
-        const ground3 = this.add.tileSprite(1820, 590, 800, 120, 'ground');
-        this.physics.add.existing(ground3, true);
-        this.platforms.add(ground3);
-
-        const ground4 = this.add.tileSprite(2700, 590, 600, 120, 'ground');
-        this.physics.add.existing(ground4, true);
-        this.platforms.add(ground4);
-
-        const ground5 = this.add.tileSprite(4130, 590, 1800, 120, 'ground');
-        this.physics.add.existing(ground5, true);
-        this.platforms.add(ground5);
-
-        const obstacle1 = this.add.tileSprite(4130, 510, 310, 120, 'ground');
+        const obstacle1 = this.add.tileSprite(4130, 530, 310, 120, 'ground');
         this.physics.add.existing(obstacle1, true);
         this.platforms.add(obstacle1);
 
@@ -57,16 +72,14 @@ class levelOne extends Phaser.Scene {
         // Collisions
         this.physics.add.collider(this.player, this.platforms);
 
-        // Invisible kill zone at the bottom
-        this.deathZone = this.add.rectangle(2500, this.scale.height + 10, 5000, 30, 0xff0000, 0); // Invisible
+        // Kill zone
+        this.deathZone = this.add.rectangle(2500, this.scale.height + 10, 5000, 30, 0xff0000, 0);
         this.physics.add.existing(this.deathZone, true);
         this.physics.add.overlap(this.player, this.deathZone, this.onPlayerDeath, null, this);
 
         // Win object
-        this.winObject = this.physics.add.sprite(4964.13, 510.8, 'object').setImmovable(true).setScale(1);
-
-        this.winObject.body.setAllowGravity(false); // Prevent it from falling
-
+        this.winObject = this.physics.add.sprite(4964.13, 530, 'object').setImmovable(true).setScale(1);
+        this.winObject.body.setAllowGravity(false);
         this.physics.add.overlap(this.player, this.winObject, this.onPlayerWin, null, this);
 
         // Controls
@@ -77,14 +90,10 @@ class levelOne extends Phaser.Scene {
             right: Phaser.Input.Keyboard.KeyCodes.D
         });
 
-        // Bring UI on top
         this.children.bringToTop(this.backHolder);
-
-        // Game Over flag
         this.isGameOver = false;
 
         let currentMusic = this.registry.get('currentMusic');
-
         if (currentMusic && currentMusic.isPlaying && currentMusic.key !== 'gameMusic') {
             currentMusic.stop();
         }
@@ -103,6 +112,7 @@ class levelOne extends Phaser.Scene {
         if (this.isGameOver) return;
         this.isGameOver = true;
 
+        this.sound.play('death_sound', { volume: 0.5 });
         this.player.setVelocity(0, 0);
         this.player.setVisible(false);
 
@@ -180,6 +190,7 @@ class levelOne extends Phaser.Scene {
         if (this.isGameOver) return;
         this.isGameOver = true;
 
+        this.sound.play('win_sound', { volume: 0.5 });
         this.player.setVelocity(0, 0);
         this.player.setVisible(false);
 
@@ -209,27 +220,6 @@ class levelOne extends Phaser.Scene {
             20
         );
 
-        const menuButton = this.add.text(this.cameras.main.scrollX + this.scale.width / 2, 365, 'Return to Main Menu', {
-            fontFamily: 'Agency FB',
-            fontSize: '28px',
-            color: '#ffffff',
-            padding: { x: 20, y: 10 }
-        }).setOrigin(0.5).setInteractive().setDepth(1);
-
-        const menuBG = this.add.graphics().setDepth(0);
-        menuBG.fillStyle(0xa10000, 1);
-        menuBG.fillRoundedRect(
-            menuButton.getBounds().x,
-            menuButton.getBounds().y,
-            menuButton.width,
-            menuButton.height,
-            15
-        );
-
-        menuButton.on('pointerdown', () => {
-            this.scene.start('mainMenu');
-        });
-
         const nextLevelButton = this.add.text(this.cameras.main.scrollX + this.scale.width / 2, 300, 'Next Level', {
             fontFamily: 'Agency FB',
             fontSize: '28px',
@@ -250,6 +240,27 @@ class levelOne extends Phaser.Scene {
         nextLevelButton.on('pointerdown', () => {
             this.scene.start('levelTwo');
         });
+
+        const menuButton = this.add.text(this.cameras.main.scrollX + this.scale.width / 2, 365, 'Return to Main Menu', {
+            fontFamily: 'Agency FB',
+            fontSize: '28px',
+            color: '#ffffff',
+            padding: { x: 20, y: 10 }
+        }).setOrigin(0.5).setInteractive().setDepth(1);
+
+        const menuBG = this.add.graphics().setDepth(0);
+        menuBG.fillStyle(0xa10000, 1);
+        menuBG.fillRoundedRect(
+            menuButton.getBounds().x,
+            menuButton.getBounds().y,
+            menuButton.width,
+            menuButton.height,
+            15
+        );
+
+        menuButton.on('pointerdown', () => {
+            this.scene.start('mainMenu');
+        });
     }
 
     update() {
@@ -266,8 +277,14 @@ class levelOne extends Phaser.Scene {
             this.player.setVelocityX(speed);
         }
 
-        if (this.keys.up.isDown && this.player.body.blocked.down) {
+        if (this.keys.up.isDown && this.player.body.blocked.down && !this.justJumped) {
             this.player.setVelocityY(-400);
+            this.sound.play('jump_sound', { volume: 0.4 });
+            this.justJumped = true;
+        }
+
+        if (!this.keys.up.isDown || !this.player.body.blocked.down) {
+            this.justJumped = false;
         }
     }
 }

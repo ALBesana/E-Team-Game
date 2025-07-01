@@ -94,7 +94,7 @@ class mainMenu extends Phaser.Scene {
                     {
                         fontSize: '48px',
                         fill: '#ffffff',
-                        fontFamily: 'Arial'
+                        fontFamily: 'Agency FB'
                     }
                 ).setOrigin(0.5);
 

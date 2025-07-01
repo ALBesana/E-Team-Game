@@ -22,6 +22,10 @@ class preloadScene extends Phaser.Scene {
 
         // Sound loader
         this.load.audio('clickSFX', 'assets/sounds/tap.wav');
+        this.load.audio('death_sound', 'assets/sounds/death_sound.mp3');
+        this.load.audio('win_sound', 'assets/sounds/win_sound.wav');
+        this.load.audio('jump_sound', 'assets/sounds/jump_sound.wav');
+
 
         // Music loader
         this.load.audio('menuMusic', 'assets/music/mainMenu - music.mp3');
