@@ -15,10 +15,23 @@ class preloadScene extends Phaser.Scene {
         this.load.image('settingsBtn', 'assets/images/UI/Settings Menu - Menu.png');
         this.load.image('exitBtn', 'assets/images/UI/Exit - Menu.png');
 
+        // Level loader
+        this.load.image('levelOneCG', 'assets/images/UI/Level1 - Selector.png');
+        this.load.image('levelTwoCG', 'assets/images/UI/Level2 - Selector.png');
+        this.load.image('levelThreeCG', 'assets/images/UI/Level3 - Selector.png');
+
         // Game loader
         this.load.image('ground', 'assets/images/platform/platform.png');
         this.load.image('character', 'assets/images/characters/character.png');
         this.load.image('object', 'assets/images/characters/object.png');
+
+        // Game menu loader
+        this.load.image('gameRetry', 'assets/images/UI/Retry - button.png');
+        this.load.image('gamePause', 'assets/images/UI/Pause - button.png');
+        this.load.image('gamePaused', 'assets/images/UI/Paused.png');
+        this.load.image('gameContinue', 'assets/images/UI/Continue - button.png');
+        this.load.image('gameSettings', 'assets/images/UI/Settings - button.png');
+        this.load.image('mainMenu', 'assets/images/UI/Main Menu - button.png');
 
         // Sound loader
         this.load.audio('clickSFX', 'assets/sounds/tap.wav');

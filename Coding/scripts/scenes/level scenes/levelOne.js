@@ -32,7 +32,24 @@ class levelOne extends Phaser.Scene {
             button.on('pointerup', () => {
                 button.clearTint();
             });
+
+            return button;  
         };
+
+        const retryBtnImage = this.add.image(this.scale.width - 80, 40, 'gameRetry');
+        this.retryBtn = setupButton(retryBtnImage, 0.07, null);
+        this.retryBtn.setScrollFactor(0);
+        this.retryBtn.on('pointerdown', () => {
+            this.scene.restart();
+        });
+
+        const pauseBtnImage = this.add.image(this.scale.width - 40, 40, 'gamePause');
+        this.pauseBtn = setupButton(pauseBtnImage, 0.07, null);
+        this.pauseBtn.setScrollFactor(0);
+        this.pauseBtn.on('pointerdown', () => {
+            this.pauseGame();
+        });
+
 
         // Exit button
         this.backHolder = this.add.image(this.scale.width / 1.025, 620, 'exitBtn')
@@ -261,6 +278,11 @@ class levelOne extends Phaser.Scene {
         menuButton.on('pointerdown', () => {
             this.scene.start('mainMenu');
         });
+    }
+
+    pauseGame() {
+    this.scene.launch('pauseMenuScene', { returnTo: this.scene.key });
+    this.scene.pause();
     }
 
     update() {

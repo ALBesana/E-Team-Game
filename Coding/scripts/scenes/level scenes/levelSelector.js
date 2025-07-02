@@ -32,13 +32,13 @@ class levelSelector extends Phaser.Scene {
 
         this.menuBackground = this.add.image(0, 0, 'menuBg1').setScale(0.92).setOrigin(0, 0);
         this.menuTitle = this.add.image(this.scale.width / 3.15, 125, 'gameTitle').setScale(0.72);
+        this.menuOpacity = this.add.image(0, 0, 'menuOpacity').setOrigin(0, 0).setAlpha(0.5);
 
-        setupButton(this.add.image(this.scale.width / 5, 275, 'startBtn'), 0.092, 'levelOne');
-    
+        setupButton(this.add.image(this.scale.width / 4, 350, 'levelOneCG'), 0.4, 'levelOne');
 
-        setupButton(this.add.image(550, 300, 'statsBtn'), 0.092, 'levelTwo');
+        setupButton(this.add.image(this.scale.width / 2, 350, 'levelTwoCG'), 0.4, 'levelTwo');
     
-        setupButton(this.add.image(830, 300, 'creditBtn'), 0.37, 'levelThree');
+        setupButton(this.add.image(this.scale.width / 1.35, 350, 'levelThreeCG'), 0.4, 'levelThree');
 
         const exitBtn = this.add.image(900, 630, 'exitBtn');
         setupButton(exitBtn, 0.11, 'mainMenu');
