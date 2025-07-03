@@ -50,13 +50,7 @@ class levelOne extends Phaser.Scene {
             this.pauseGame();
         });
 
-
-        // Exit button
-        this.backHolder = this.add.image(this.scale.width / 1.025, 620, 'exitBtn')
-            .setScrollFactor(0);
-        setupButton(this.backHolder, 0.08, 'mainMenu');
-
-        // Platforms with gaps (refactored with loop)
+        // Platforms with gaps
         this.platforms = this.physics.add.staticGroup();
 
         const groundSpecs = [
@@ -107,7 +101,6 @@ class levelOne extends Phaser.Scene {
             right: Phaser.Input.Keyboard.KeyCodes.D
         });
 
-        this.children.bringToTop(this.backHolder);
         this.isGameOver = false;
 
         let currentMusic = this.registry.get('currentMusic');
@@ -125,7 +118,6 @@ class levelOne extends Phaser.Scene {
     }
 
     onPlayerDeath() {
-        this.backHolder.setVisible(false).disableInteractive();
         if (this.isGameOver) return;
         this.isGameOver = true;
 
@@ -203,7 +195,6 @@ class levelOne extends Phaser.Scene {
     }
 
     onPlayerWin() {
-        this.backHolder.setVisible(false).disableInteractive();
         if (this.isGameOver) return;
         this.isGameOver = true;
 
@@ -281,8 +272,8 @@ class levelOne extends Phaser.Scene {
     }
 
     pauseGame() {
-    this.scene.launch('pauseMenuScene', { returnTo: this.scene.key });
-    this.scene.pause();
+        this.scene.launch('pauseMenuScene', { returnTo: this.scene.key });
+        this.scene.pause();
     }
 
     update() {
