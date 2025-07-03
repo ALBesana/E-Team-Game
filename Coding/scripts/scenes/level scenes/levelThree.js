@@ -3,8 +3,9 @@ class levelThree extends Phaser.Scene {
         super({ key: 'levelThree' });
     }
 
-    create() {
-        this.gameBackground = this.add.tileSprite(0, 0, 10000, this.scale.height, 'levelOneBG').setOrigin(0, 0);
+    create(data) {
+        this.returnTo = data?.returnTo || this.scene.key;
+        this.gameBackground = this.add.tileSprite(0, 0, 10000, this.scale.height, 'levelBG3').setOrigin(0, 0);
 
         this.setupUIButtons();
 
@@ -41,11 +42,11 @@ class levelThree extends Phaser.Scene {
 
         // --- MUSIC MANAGEMENT START ---
         let currentMusic = this.registry.get('currentMusic');
-        if (currentMusic && currentMusic.isPlaying && currentMusic.key !== 'gameMusic') {
+        if (currentMusic && currentMusic.isPlaying && currentMusic.key !== 'gameMusic3') {
             currentMusic.stop();
         }
-        if (!currentMusic || currentMusic.key !== 'gameMusic') {
-            currentMusic = this.sound.add('gameMusic', { loop: true, volume: 0.3 });
+        if (!currentMusic || currentMusic.key !== 'gameMusic3') {
+            currentMusic = this.sound.add('gameMusic3', { loop: true, volume: 0.3 });
             currentMusic.play();
             this.registry.set('currentMusic', currentMusic);
         } else if (!currentMusic.isPlaying) {
@@ -74,11 +75,11 @@ class levelThree extends Phaser.Scene {
             button.on('pointerup', () => button.clearTint());
         };
 
-        this.retryBtn = this.add.image(this.scale.width - 80, 40, 'gameRetry').setScrollFactor(0);
-        setupButton(this.retryBtn, 0.07, null, () => this.scene.restart());
+        this.retryBtn = this.add.image(this.scale.width - 120, 40, 'gameRetry').setScrollFactor(0);
+        setupButton(this.retryBtn, 0.12, null, () => this.scene.restart());
 
-        this.pauseBtn = this.add.image(this.scale.width - 40, 40, 'gamePause').setScrollFactor(0);
-        setupButton(this.pauseBtn, 0.07, null, () => this.pauseGame());
+        this.pauseBtn = this.add.image(this.scale.width - 60, 40, 'gamePause').setScrollFactor(0);
+        setupButton(this.pauseBtn, 0.12, null, () => this.pauseGame());
     }
 
     createGround() {
@@ -237,7 +238,7 @@ class levelThree extends Phaser.Scene {
     update() {
         if (this.isGameOver) return;
 
-        this.gameBackground.tilePositionY -= 0.3;
+        this.gameBackground.tilePositionX = this.cameras.main.scrollX * 0.02;
 
         const speed = 1500;
         this.player.setVelocityX(0);

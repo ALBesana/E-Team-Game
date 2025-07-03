@@ -5,7 +5,7 @@ class levelOne extends Phaser.Scene {
 
     create() {
         // Background
-        this.gameBackground = this.add.tileSprite(0, 0, 5000, this.scale.height, 'levelOneBG').setOrigin(0, 0);
+        this.gameBackground = this.add.tileSprite(0, 0, 5000, this.scale.height, 'levelBG1').setOrigin(0, 0);
 
         // Button setup function
         const setupButton = (button, originalScale, targetScene) => {
@@ -36,15 +36,15 @@ class levelOne extends Phaser.Scene {
             return button;  
         };
 
-        const retryBtnImage = this.add.image(this.scale.width - 80, 40, 'gameRetry');
-        this.retryBtn = setupButton(retryBtnImage, 0.07, null);
+        const retryBtnImage = this.add.image(this.scale.width - 120, 40, 'gameRetry');
+        this.retryBtn = setupButton(retryBtnImage, 0.12, null);
         this.retryBtn.setScrollFactor(0);
         this.retryBtn.on('pointerdown', () => {
             this.scene.restart();
         });
 
-        const pauseBtnImage = this.add.image(this.scale.width - 40, 40, 'gamePause');
-        this.pauseBtn = setupButton(pauseBtnImage, 0.07, null);
+        const pauseBtnImage = this.add.image(this.scale.width - 60, 40, 'gamePause');
+        this.pauseBtn = setupButton(pauseBtnImage, 0.12, null);
         this.pauseBtn.setScrollFactor(0);
         this.pauseBtn.on('pointerdown', () => {
             this.pauseGame();
@@ -104,12 +104,12 @@ class levelOne extends Phaser.Scene {
         this.isGameOver = false;
 
         let currentMusic = this.registry.get('currentMusic');
-        if (currentMusic && currentMusic.isPlaying && currentMusic.key !== 'gameMusic') {
+        if (currentMusic && currentMusic.isPlaying && currentMusic.key !== 'gameMusic1') {
             currentMusic.stop();
         }
 
-        if (!currentMusic || currentMusic.key !== 'gameMusic') {
-            currentMusic = this.sound.add('gameMusic', { loop: true, volume: 0.3 });
+        if (!currentMusic || currentMusic.key !== 'gameMusic1') {
+            currentMusic = this.sound.add('gameMusic1', { loop: true, volume: 0.3 });
             currentMusic.play();
             this.registry.set('currentMusic', currentMusic);
         } else if (!currentMusic.isPlaying) {
@@ -279,7 +279,7 @@ class levelOne extends Phaser.Scene {
     update() {
         if (this.isGameOver) return;
 
-        this.gameBackground.tilePositionY -= 0.3;
+        this.gameBackground.tilePositionX = this.cameras.main.scrollX * 0.03;
 
         const speed = 1000;
         this.player.setVelocityX(0);

@@ -3,14 +3,22 @@ class settingsScene extends Phaser.Scene {
         super({ key: 'settingsScene' });
     }
 
-    create() {
+     create(data) {
+        this.returnSceneKey = data.returnTo || 'mainMenu';
+
+        const centerX = this.cameras.main.centerX;
+        const centerY = this.cameras.main.centerY;
+
+        // Background image based on design
+        this.menuBackground = this.add.image(0, 0, 'menuBg1').setScale(0.92).setOrigin(0, 0);
+        this.menuOpacity = this.add.image(0, 0, 'menuOpacity').setOrigin(0, 0).setAlpha(0.5);
+        this.add.image(centerX, centerY, 'gameSettingsBg').setOrigin(0.5).setScale(1.2);
+
+        // Reusable button setup function
         const setupButton = (button, originalScale, targetScene) => {
             button.setScale(originalScale).setInteractive();
 
-            button.on('pointerover', () => {
-                button.setScale(originalScale * 1.1);
-            });
-
+            button.on('pointerover', () => button.setScale(originalScale * 1.1));
             button.on('pointerout', () => {
                 button.setScale(originalScale);
                 button.clearTint();
@@ -25,25 +33,48 @@ class settingsScene extends Phaser.Scene {
                 });
             });
 
-            button.on('pointerup', () => {
-                button.clearTint();
-            });
+            button.on('pointerup', () => button.clearTint());
+            return button;
         };
 
-        this.menuBackground = this.add.image(0, 0, 'menuBg1').setScale(0.92).setOrigin(0, 0);
-        this.menuOpacity = this.add.image(0, 0, 'menuOpacity').setOrigin(0, 0).setAlpha(0.5);
+        // SOUND TOGGLE BUTTON (custom logic, not using setupButton)
+        this.isSoundOn = !this.sound.mute;
+        this.soundBtn = this.add.image(centerX - 60, centerY - 23, this.isSoundOn ? 'soundOnBtn' : 'soundOffBtn')
+            .setInteractive()
+            .setScale(0.12);
 
-        setupButton(this.add.image(900, 630, 'exitBtn'), 0.11, 'mainMenu');
-        // this.backHolder.on('pointerdown', () => {
-        //     this.sound.play('clickSFX', {volume: 0.5});
+        this.soundBtn.on('pointerdown', () => {
+            this.isSoundOn = !this.isSoundOn;
+            this.sound.mute = !this.isSoundOn;
+            this.soundBtn.setTexture(this.isSoundOn ? 'soundOnBtn' : 'soundOffBtn');
+            this.sound.play('clickSFX', { volume: 0.5 });
+            this.registry.set('isSoundMuted', this.sound.mute);
+        });
 
-        //     this.time.delayedCall(150, () => {
-        //         this.scene.start('mainMenu');
-        //     });
-        // });
-    }
+        // WINDOWED BUTTON
+        this.windowedBtn = this.add.image(centerX - 100, centerY + 115, 'windowedBtn');
+        setupButton(this.windowedBtn, 0.4, null);
+        this.windowedBtn.on('pointerdown', () => {
+            this.scale.stopFullscreen();
+            this.sound.play('clickSFX', { volume: 0.5 });
+        });
 
-    update() {
-        // this.gameBackground.tilePositionY -= 0.3;
+        // FULLSCREEN BUTTON
+        this.fullscreenBtn = this.add.image(centerX - 100, centerY + 215, 'fullscreenBtn');
+        setupButton(this.fullscreenBtn, 0.4, null);
+        this.fullscreenBtn.on('pointerdown', () => {
+            this.scale.startFullscreen();
+            this.sound.play('clickSFX', { volume: 0.5 });
+        });
+
+        // BACK BUTTON
+        this.backBtn = this.add.image(centerX + 230, centerY + 250, 'backBtn');
+        setupButton(this.backBtn, 0.3, null);
+        this.backBtn.on('pointerdown', () => {
+            this.sound.play('clickSFX', { volume: 0.5 });
+            this.time.delayedCall(150, () => {
+                this.scene.start(this.returnSceneKey); // Back to previous level or pause menu
+            });
+        });
     }
 }

@@ -34,7 +34,7 @@ class levelTwo extends Phaser.Scene {
         };
 
         // Background
-        this.gameBackground = this.add.tileSprite(0, 0, 10000, this.scale.height, 'levelOneBG').setOrigin(0, 0);
+        this.gameBackground = this.add.tileSprite(0, 0, 10000, this.scale.height, 'levelBG2').setOrigin(0, 0);
 
         // Platforms
         this.platforms = this.physics.add.staticGroup();
@@ -86,26 +86,26 @@ class levelTwo extends Phaser.Scene {
         this.isGameOver = false;
 
         // Retry Button (top-right)
-        const retryBtnImage = this.add.image(this.scale.width - 80, 40, 'gameRetry').setScrollFactor(0);
-        this.retryBtn = setupButton(retryBtnImage, 0.07, null);
+        const retryBtnImage = this.add.image(this.scale.width - 120, 40, 'gameRetry').setScrollFactor(0);
+        this.retryBtn = setupButton(retryBtnImage, 0.12, null);
         this.retryBtn.on('pointerdown', () => {
             this.scene.restart();
         });
 
         // Pause Button (top-right, next to retry)
-        const pauseBtnImage = this.add.image(this.scale.width - 40, 40, 'gamePause').setScrollFactor(0);
-        this.pauseBtn = setupButton(pauseBtnImage, 0.07, null);
+        const pauseBtnImage = this.add.image(this.scale.width - 60, 40, 'gamePause').setScrollFactor(0);
+        this.pauseBtn = setupButton(pauseBtnImage, 0.12, null);
         this.pauseBtn.on('pointerdown', () => {
             this.pauseGame();
         });
 
         // Music Cleanup and Play
         let currentMusic = this.registry.get('currentMusic');
-        if (currentMusic && currentMusic.isPlaying && currentMusic.key !== 'gameMusic') {
+        if (currentMusic && currentMusic.isPlaying && currentMusic.key !== 'gameMusic2') {
             currentMusic.stop();
         }
-        if (!currentMusic || currentMusic.key !== 'gameMusic') {
-            currentMusic = this.sound.add('gameMusic', { loop: true, volume: 0.3 });
+        if (!currentMusic || currentMusic.key !== 'gameMusic2') {
+            currentMusic = this.sound.add('gameMusic2', { loop: true, volume: 0.3 });
             currentMusic.play();
             this.registry.set('currentMusic', currentMusic);
         } else if (!currentMusic.isPlaying) {
@@ -275,7 +275,7 @@ class levelTwo extends Phaser.Scene {
     update() {
         if (this.isGameOver) return;
 
-        this.gameBackground.tilePositionY -= 0.3;
+        this.gameBackground.tilePositionX = this.cameras.main.scrollX * 0.02;
 
         const speed = 1500;
         this.player.setVelocityX(0);

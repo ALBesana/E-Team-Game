@@ -24,14 +24,25 @@ class preloadScene extends Phaser.Scene {
         this.load.image('ground', 'assets/images/platform/platform.png');
         this.load.image('character', 'assets/images/characters/character.png');
         this.load.image('object', 'assets/images/characters/object.png');
+        this.load.image('levelBG1', 'assets/images/backgrounds/Level1BckGrnd.png');
+        this.load.image('levelBG2', 'assets/images/backgrounds/Level2BckGrnd.png');
+        this.load.image('levelBG3', 'assets/images/backgrounds/Level3BckGrnd.png');
 
         // Game menu loader
         this.load.image('gameRetry', 'assets/images/UI/Retry - button.png');
         this.load.image('gamePause', 'assets/images/UI/Pause - button.png');
-        this.load.image('gamePaused', 'assets/images/UI/Paused.png');
+        this.load.image('gamePaused', 'assets/images/backgrounds/Paused.png');
         this.load.image('gameContinue', 'assets/images/UI/Continue - button.png');
         this.load.image('gameSettings', 'assets/images/UI/Settings - button.png');
         this.load.image('mainMenu', 'assets/images/UI/Main Menu - button.png');
+
+        // Settings loader
+        this.load.image('gameSettingsBg', 'assets/images/backgrounds/Settings - Background.png');
+        this.load.image('fullscreenBtn', 'assets/images/UI/Fullscreen Button - Settings.png');
+        this.load.image('windowedBtn', 'assets/images/UI/Windowed Button - Settings.png');
+        this.load.image('soundOnBtn', 'assets/images/UI/Sound On Button - Settings.png');
+        this.load.image('soundOffBtn', 'assets/images/UI/Sound Off Button - Settings.png');
+        this.load.image('backBtn', 'assets/images/UI/Back Button.png');
 
         // Sound loader
         this.load.audio('clickSFX', 'assets/sounds/tap.wav');
@@ -42,10 +53,16 @@ class preloadScene extends Phaser.Scene {
 
         // Music loader
         this.load.audio('menuMusic', 'assets/music/mainMenu - music.mp3');
-        this.load.audio('gameMusic', 'assets/music/gameMenu - music.mp3');
+        this.load.audio('gameMusic1', 'assets/music/levelOne - music.mp3');
+        this.load.audio('gameMusic2', 'assets/music/levelTwo - music.mp3');
+        this.load.audio('gameMusic3', 'assets/music/levelThree - music.mp3');
     }
 
     create() {
+        if (this.registry.get('isSoundMuted') === true) {
+            this.sound.mute = true;
+        }
+
         this.scene.start('mainMenu');
     }
 }

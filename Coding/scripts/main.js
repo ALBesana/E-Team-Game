@@ -4,6 +4,7 @@ const config = {
     height: 670,
     parent: 'gameContainer',
     scale: {
+    mode: Phaser.Scale.NONE,
     autoCenter: Phaser.Scale.CENTER_BOTH, // Center both horizontally and vertically
     // Optional:
     // pageAlignHorizontally: true,
@@ -16,7 +17,7 @@ const config = {
             debug: false
         }
     },
-    scene: [ preloadScene, mainMenu, statsScene, creditsScene, settingsScene, levelSelector, levelOne, levelTwo, levelThree, pauseMenuScene]
+    scene: [ preloadScene, mainMenu, statsScene, creditsScene, settingsScene, levelSelector, levelOne, levelTwo, levelThree, pauseMenuScene, gameSettingsScene]
 };
 
 let game = new Phaser.Game(config);

@@ -14,7 +14,11 @@ class pauseMenuScene extends Phaser.Scene {
         this.pausedTitle = this.add.image(centerX, centerY, 'gamePaused').setOrigin(0.5);
 
         this.continueBtn = this.setupButton(this.add.image(centerX - 125, centerY + 20, 'gameContinue'), 0.3, null);
-        this.settingsBtn = this.setupButton(this.add.image(centerX, centerY + 20, 'gameSettings'), 0.25, 'settingsScene');
+        this.settingsBtn = this.setupButton(this.add.image(centerX, centerY + 20, 'gameSettings'), 0.25, null);
+        this.settingsBtn.on('pointerdown', () => {
+            this.scene.stop();                    // Stop pause menu
+            this.scene.start('gameSettingsScene', { returnTo: 'pauseMenuScene', returnSceneKey: this.returnSceneKey });
+        });
         this.mainMenuBtn = this.setupButton(this.add.image(centerX + 125, centerY + 20, 'mainMenu'), 0.25, 'mainMenu');
 
         this.continueBtn.on('pointerdown', () => {
