@@ -4,6 +4,7 @@ class mainMenu extends Phaser.Scene {
     }
 
     create() {
+        // Button setup for sfx, hover animation, dark tint
         const setupButton = (button, originalScale, targetScene) => {
             button.setScale(originalScale).setInteractive();
 
@@ -87,7 +88,5 @@ class mainMenu extends Phaser.Scene {
     }
 
     update() {
-        // Optional scrolling background
-        // this.menuBackground.tilePositionY -= 0.2;
     }
 }

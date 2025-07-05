@@ -5,7 +5,7 @@ class levelOne extends Phaser.Scene {
 
     create() {
         // Background
-        this.gameBackground = this.add.tileSprite(0, 0, 5000, this.scale.height, 'levelBG1').setOrigin(0, 0);
+        this.gameBackground = this.add.tileSprite(0, 0, 5020, this.scale.height, 'levelBG1').setOrigin(0, 0);
 
         // Button setup function
         const setupButton = (button, originalScale, targetScene) => {
@@ -72,13 +72,27 @@ class levelOne extends Phaser.Scene {
         this.platforms.add(obstacle1);
 
         // Player
-        this.player = this.physics.add.sprite(100, 500, 'character')
+        const frames = this.anims.create({
+            key: 'run',
+            frames: this.anims.generateFrameNames('character', {
+                prefix: 'frame',
+                start: 0,
+                end: 33,
+                suffix: '.png',
+                zeroPad: 4
+            }),
+            frameRate: 33,
+            repeat: -1
+        });
+        console.log(frames);
+
+        this.player = this.physics.add.sprite(100, 400, 'character', 'frame0000.png')
             .setCollideWorldBounds(true)
-            .setScale(1.2);
+            .setScale(0.3);
 
         this.cameras.main.startFollow(this.player);
-        this.cameras.main.setBounds(0, 0, 5000, this.scale.height);
-        this.physics.world.setBounds(0, 0, 5000, this.scale.height);
+        this.cameras.main.setBounds(0, 0, 5020, this.scale.height);
+        this.physics.world.setBounds(0, 0, 5020, this.scale.height);
 
         // Collisions
         this.physics.add.collider(this.player, this.platforms);
@@ -286,8 +300,15 @@ class levelOne extends Phaser.Scene {
 
         if (this.keys.left.isDown) {
             this.player.setVelocityX(-speed);
+            this.player.anims.play('run', true);
+            this.player.setFlipX(true);
         } else if (this.keys.right.isDown) {
             this.player.setVelocityX(speed);
+            this.player.anims.play('run', true);
+            this.player.setFlipX(false);
+        } else {
+            this.player.anims.stop();
+            this.player.setFrame('frame0000.png');
         }
 
         if (this.keys.up.isDown && this.player.body.blocked.down && !this.justJumped) {

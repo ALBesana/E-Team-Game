@@ -5,7 +5,6 @@ class preloadScene extends Phaser.Scene {
     
     preload() {
         // Menu loader
-        this.load.image('levelOneBG', 'assets/images/backgrounds/Green.png');
         this.load.image('menuBg1', 'assets/images/backgrounds/Background - Menu.png');
         this.load.image('menuOpacity', 'assets/images/backgrounds/black.jpg');
         this.load.image('gameTitle', 'assets/images/UI/Title - Menu.png');
@@ -22,7 +21,7 @@ class preloadScene extends Phaser.Scene {
 
         // Game loader
         this.load.image('ground', 'assets/images/platform/platform.png');
-        this.load.image('character', 'assets/images/characters/character.png');
+        this.load.atlas('character', 'assets/images/characters/characterSpritesheet.png', 'assets/images/characters/characterSpritesheet.json');
         this.load.image('object', 'assets/images/characters/object.png');
         this.load.image('levelBG1', 'assets/images/backgrounds/Level1BckGrnd.png');
         this.load.image('levelBG2', 'assets/images/backgrounds/Level2BckGrnd.png');

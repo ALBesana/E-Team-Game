@@ -16,17 +16,18 @@ class pauseMenuScene extends Phaser.Scene {
         this.continueBtn = this.setupButton(this.add.image(centerX - 125, centerY + 20, 'gameContinue'), 0.3, null);
         this.settingsBtn = this.setupButton(this.add.image(centerX, centerY + 20, 'gameSettings'), 0.25, null);
         this.settingsBtn.on('pointerdown', () => {
-            this.scene.stop();                    // Stop pause menu
+            this.scene.stop();
             this.scene.start('gameSettingsScene', { returnTo: 'pauseMenuScene', returnSceneKey: this.returnSceneKey });
         });
         this.mainMenuBtn = this.setupButton(this.add.image(centerX + 125, centerY + 20, 'mainMenu'), 0.25, 'mainMenu');
 
         this.continueBtn.on('pointerdown', () => {
-            this.scene.stop();                  // stop overlay scene
-            this.scene.resume(this.returnSceneKey);      // resume gameplay
+            this.scene.stop();
+            this.scene.resume(this.returnSceneKey);
         });
     }
 
+    // Pause, unpause, and change scene buttons
     setupButton(button, originalScale, targetScene) {
         button.setScale(originalScale).setInteractive();
 
@@ -42,9 +43,9 @@ class pauseMenuScene extends Phaser.Scene {
 
             this.time.delayedCall(150, () => {
                 if (targetScene) {
-                    this.scene.stop(this.returnSceneKey); // stop paused gameplay scene
-                    this.scene.stop();                    // stop pause menu itself
-                    this.scene.start(targetScene);        // go to desired scene
+                    this.scene.stop(this.returnSceneKey);
+                    this.scene.stop();
+                    this.scene.start(targetScene);
                 }
             });
         });

@@ -33,17 +33,21 @@ class statsScene extends Phaser.Scene {
         this.menuBackground = this.add.image(0, 0, 'menuBg1').setScale(0.92).setOrigin(0, 0);
         this.menuOpacity = this.add.image(0, 0, 'menuOpacity').setOrigin(0, 0).setAlpha(0.5);
 
-        setupButton(this.add.image(900, 630, 'exitBtn'), 0.11, 'mainMenu');
-        // this.backHolder.on('pointerdown', () => {
-        //     this.sound.play('clickSFX', {volume: 0.5});
+        const centerX = this.cameras.main.centerX;
+        const centerY = this.cameras.main.centerY;
 
-        //     this.time.delayedCall(150, () => {
-        //         this.scene.start('mainMenu');
-        //     });
-        // });
+        const creditStyle = {
+            fontFamily: 'Agency FB',
+            fontSize: '32px',
+            color: '#ffffff',
+            align: 'center'
+        };
+
+        this.add.text(centerX, centerY, '[ Currently in Development ]', creditStyle).setOrigin(0.5);
+
+        setupButton(this.add.image(900, 630, 'exitBtn'), 0.11, 'mainMenu');
     }
 
     update() {
-        // this.gameBackground.tilePositionY -= 0.3;
     }
 }

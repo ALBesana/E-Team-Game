@@ -4,6 +4,7 @@ class levelSelector extends Phaser.Scene {
     }
 
     create() {
+        // Button Setup
         const setupButton = (button, originalScale, targetScene) => {
             button.setScale(originalScale).setInteractive();
 
@@ -47,8 +48,6 @@ class levelSelector extends Phaser.Scene {
     }
 
     update() {
-        // Optional scrolling background
-        // this.menuBackground.tilePositionY -= 0.2;
     }
 }
 

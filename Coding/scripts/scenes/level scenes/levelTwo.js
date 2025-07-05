@@ -34,7 +34,7 @@ class levelTwo extends Phaser.Scene {
         };
 
         // Background
-        this.gameBackground = this.add.tileSprite(0, 0, 10000, this.scale.height, 'levelBG2').setOrigin(0, 0);
+        this.gameBackground = this.add.tileSprite(0, 0, 10020, this.scale.height, 'levelBG2').setOrigin(0, 0);
 
         // Platforms
         this.platforms = this.physics.add.staticGroup();
@@ -51,9 +51,28 @@ class levelTwo extends Phaser.Scene {
         });
 
         // Player
-        this.player = this.physics.add.sprite(100, 500, 'character')
+                const frames = this.anims.create({
+            key: 'run',
+            frames: this.anims.generateFrameNames('character', {
+                prefix: 'frame',
+                start: 0,
+                end: 33,
+                suffix: '.png',
+                zeroPad: 4
+            }),
+            frameRate: 24,
+            repeat: -1
+        });
+        console.log(frames);
+
+        this.player = this.physics.add.sprite(100, 400, 'character', 'frame0000.png')
             .setCollideWorldBounds(true)
-            .setScale(1.2);
+            .setScale(0.3);
+
+        // Camera and World Bounds
+        this.cameras.main.startFollow(this.player);
+        this.cameras.main.setBounds(0, 0, 10020, this.scale.height);
+        this.physics.world.setBounds(0, 0, 10020, this.scale.height);
 
         // Win Object
         this.winObject = this.physics.add.sprite(9980.8, 530.8, 'object')
@@ -61,11 +80,6 @@ class levelTwo extends Phaser.Scene {
             .setScale(1);
         this.winObject.body.setAllowGravity(false);
         this.physics.add.overlap(this.player, this.winObject, this.onPlayerWin, null, this);
-
-        // Camera and World Bounds
-        this.cameras.main.startFollow(this.player);
-        this.cameras.main.setBounds(0, 0, 10000, this.scale.height);
-        this.physics.world.setBounds(0, 0, 10000, this.scale.height);
 
         // Collisions
         this.physics.add.collider(this.player, this.platforms);
@@ -190,6 +204,7 @@ class levelTwo extends Phaser.Scene {
         });
     }
 
+    // Win condition
     onPlayerWin() {
         if (this.isGameOver) return;
         this.isGameOver = true;
@@ -275,15 +290,22 @@ class levelTwo extends Phaser.Scene {
     update() {
         if (this.isGameOver) return;
 
-        this.gameBackground.tilePositionX = this.cameras.main.scrollX * 0.02;
+        this.gameBackground.tilePositionX = this.cameras.main.scrollX * 0.03;
 
-        const speed = 1500;
+        const speed = 1000;
         this.player.setVelocityX(0);
 
         if (this.keys.left.isDown) {
             this.player.setVelocityX(-speed);
+            this.player.anims.play('run', true);
+            this.player.setFlipX(true);
         } else if (this.keys.right.isDown) {
             this.player.setVelocityX(speed);
+            this.player.anims.play('run', true);
+            this.player.setFlipX(false);
+        } else {
+            this.player.anims.stop();
+            this.player.setFrame('frame0000.png');
         }
 
         if (this.keys.up.isDown && this.player.body.blocked.down && !this.justJumped) {

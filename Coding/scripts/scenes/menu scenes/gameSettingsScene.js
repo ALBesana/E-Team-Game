@@ -10,12 +10,11 @@ class gameSettingsScene extends Phaser.Scene {
         const centerX = this.cameras.main.centerX;
         const centerY = this.cameras.main.centerY;
 
-        // Background image based on design
         this.menuBackground = this.add.image(0, 0, 'menuBg1').setScale(0.92).setOrigin(0, 0);
         this.menuOpacity = this.add.image(0, 0, 'menuOpacity').setOrigin(0, 0).setAlpha(0.5);
         this.add.image(centerX, centerY, 'gameSettingsBg').setOrigin(0.5).setScale(1.2);
 
-        // Reusable button setup function
+        // Button setup
         const setupButton = (button, originalScale, targetScene) => {
             button.setScale(originalScale).setInteractive();
 
@@ -38,7 +37,7 @@ class gameSettingsScene extends Phaser.Scene {
             return button;
         };
 
-        // SOUND TOGGLE BUTTON (custom logic, not using setupButton)
+        // Sound On/Off button (custom logic, not using setupButton)
         this.isSoundOn = !this.sound.mute;
         this.soundBtn = this.add.image(centerX - 60, centerY - 23, this.isSoundOn ? 'soundOnBtn' : 'soundOffBtn')
             .setInteractive()
@@ -52,7 +51,7 @@ class gameSettingsScene extends Phaser.Scene {
             this.registry.set('isSoundMuted', this.sound.mute);
         });
 
-        // WINDOWED BUTTON
+        // Windowed button
         this.windowedBtn = this.add.image(centerX - 100, centerY + 115, 'windowedBtn');
         setupButton(this.windowedBtn, 0.4, null);
         this.windowedBtn.on('pointerdown', () => {
@@ -60,7 +59,7 @@ class gameSettingsScene extends Phaser.Scene {
             this.sound.play('clickSFX', { volume: 0.5 });
         });
 
-        // FULLSCREEN BUTTON
+        // Fullscreen button
         this.fullscreenBtn = this.add.image(centerX - 100, centerY + 215, 'fullscreenBtn');
         setupButton(this.fullscreenBtn, 0.4, null);
         this.fullscreenBtn.on('pointerdown', () => {
@@ -68,13 +67,13 @@ class gameSettingsScene extends Phaser.Scene {
             this.sound.play('clickSFX', { volume: 0.5 });
         });
 
-        // BACK BUTTON
+        // Back button
         this.backBtn = this.add.image(centerX + 230, centerY + 250, 'backBtn');
         setupButton(this.backBtn, 0.3, null);
         this.backBtn.on('pointerdown', () => {
             this.sound.play('clickSFX', { volume: 0.5 });
             this.time.delayedCall(150, () => {
-                this.scene.start(this.returnTo, { returnTo: this.originalLevel });// Back to previous level or pause menu
+                this.scene.start(this.returnTo, { returnTo: this.originalLevel });
             });
         });
     }

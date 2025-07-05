@@ -5,10 +5,7 @@ const config = {
     parent: 'gameContainer',
     scale: {
     mode: Phaser.Scale.NONE,
-    autoCenter: Phaser.Scale.CENTER_BOTH, // Center both horizontally and vertically
-    // Optional:
-    // pageAlignHorizontally: true,
-    // pageAlignVertically: true,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
   },
     physics: {
         default: 'arcade',

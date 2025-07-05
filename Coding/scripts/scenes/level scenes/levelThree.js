@@ -5,14 +5,35 @@ class levelThree extends Phaser.Scene {
 
     create(data) {
         this.returnTo = data?.returnTo || this.scene.key;
-        this.gameBackground = this.add.tileSprite(0, 0, 10000, this.scale.height, 'levelBG3').setOrigin(0, 0);
+        this.gameBackground = this.add.tileSprite(0, 0, 10020, this.scale.height, 'levelBG3').setOrigin(0, 0);
 
         this.setupUIButtons();
 
         this.platforms = this.physics.add.staticGroup();
         this.createGround();
 
-        this.player = this.physics.add.sprite(100, 500, 'character').setCollideWorldBounds(true).setScale(1.2);
+        // Player
+                const frames = this.anims.create({
+            key: 'run',
+            frames: this.anims.generateFrameNames('character', {
+                prefix: 'frame',
+                start: 0,
+                end: 33,
+                suffix: '.png',
+                zeroPad: 4
+            }),
+            frameRate: 24,
+            repeat: -1
+        });
+        console.log(frames);
+
+        this.player = this.physics.add.sprite(100, 400, 'character', 'frame0000.png')
+            .setCollideWorldBounds(true)
+            .setScale(0.3);
+
+        this.cameras.main.startFollow(this.player);
+        this.cameras.main.setBounds(0, 0, 10020, this.scale.height);
+        this.physics.world.setBounds(0, 0, 10020, this.scale.height);
 
         // Win Object
         this.winObject = this.physics.add.sprite(9980.8, 530.8, 'object')
@@ -20,10 +41,6 @@ class levelThree extends Phaser.Scene {
             .setScale(1);
         this.winObject.body.setAllowGravity(false);
         this.physics.add.overlap(this.player, this.winObject, this.onPlayerWin, null, this);
-
-        this.cameras.main.startFollow(this.player);
-        this.cameras.main.setBounds(0, 0, 10000, this.scale.height);
-        this.physics.world.setBounds(0, 0, 10000, this.scale.height);
 
         this.physics.add.collider(this.player, this.platforms);
 
@@ -40,7 +57,7 @@ class levelThree extends Phaser.Scene {
         this.isGameOver = false;
         this.justJumped = false;
 
-        // --- MUSIC MANAGEMENT START ---
+        // Music Player
         let currentMusic = this.registry.get('currentMusic');
         if (currentMusic && currentMusic.isPlaying && currentMusic.key !== 'gameMusic3') {
             currentMusic.stop();
@@ -52,9 +69,9 @@ class levelThree extends Phaser.Scene {
         } else if (!currentMusic.isPlaying) {
             currentMusic.play();
         }
-        // --- MUSIC MANAGEMENT END ---
     }
 
+    // Button Functions
     setupUIButtons() {
         const setupButton = (button, originalScale, targetScene, callback) => {
             button.setScale(originalScale).setInteractive();
@@ -82,12 +99,13 @@ class levelThree extends Phaser.Scene {
         setupButton(this.pauseBtn, 0.12, null, () => this.pauseGame());
     }
 
+    // Ground platforms
     createGround() {
         const groundSpecs = [
             [100, 610, 1000], [1150, 610, 400], [1600, 610, 800], [2500, 610, 600],
             [3200, 610, 1000], [4300, 610, 600], [5100, 610, 700], [6000, 610, 500],
             [6700, 610, 1200], [8100, 610, 400], [8600, 610, 600], [8800, 610, 800],
-            [9000, 610, 400], [9700, 610, 600]
+            [9000, 610, 400], [9720, 610, 600]
         ];
 
         groundSpecs.forEach(([x, y, width]) => {
@@ -97,11 +115,13 @@ class levelThree extends Phaser.Scene {
         });
     }
 
+    // Pause Logic
     pauseGame() {
         this.scene.launch('pauseMenuScene', { returnTo: this.scene.key });
         this.scene.pause();
     }
 
+    // Lose condition
     onPlayerDeath() {
         if (this.isGameOver) return;
         this.isGameOver = true;
@@ -179,6 +199,7 @@ class levelThree extends Phaser.Scene {
         });
     }
 
+    // Win condition
     onPlayerWin() {
         if (this.isGameOver) return;
         this.isGameOver = true;
@@ -238,13 +259,23 @@ class levelThree extends Phaser.Scene {
     update() {
         if (this.isGameOver) return;
 
-        this.gameBackground.tilePositionX = this.cameras.main.scrollX * 0.02;
+        this.gameBackground.tilePositionX = this.cameras.main.scrollX * 0.03;
 
-        const speed = 1500;
+        const speed = 1000;
         this.player.setVelocityX(0);
 
-        if (this.keys.left.isDown) this.player.setVelocityX(-speed);
-        else if (this.keys.right.isDown) this.player.setVelocityX(speed);
+        if (this.keys.left.isDown) {
+            this.player.setVelocityX(-speed);
+            this.player.anims.play('run', true);
+            this.player.setFlipX(true);
+        } else if (this.keys.right.isDown) {
+            this.player.setVelocityX(speed);
+            this.player.anims.play('run', true);
+            this.player.setFlipX(false);
+        } else {
+            this.player.anims.stop();
+            this.player.setFrame('frame0000.png');
+        }
 
         if (this.keys.up.isDown && this.player.body.blocked.down && !this.justJumped) {
             this.player.setVelocityY(-400);
