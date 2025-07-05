@@ -16,7 +16,7 @@ A - Run Left
 D - Run Right
 
 # Members
-Alfonso, Favio Maximo G. - Asset Developer
-Besana, A.L. Schatz A. - Project Lead
-Faller, Amiel Ed Angelo A. - Lead Developer
-Maldonado Zavala, Alvaro - Co-Lead Developer
+- Alfonso, Favio Maximo G. - Asset Developer
+- Besana, A.L. Schatz A. - Project Lead
+- Faller, Amiel Ed Angelo A. - Lead Developer
+- Maldonado Zavala, Alvaro - Co-Lead Developer
