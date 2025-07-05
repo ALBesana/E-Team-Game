@@ -1,78 +1,19 @@
-class levelOne extends Phaser.Scene {
+class levelThree extends Phaser.Scene {
     constructor() {
-        super({ key: 'levelOne' });
+        super({ key: 'levelThree' });
     }
 
-    create() {
-        // Background
-        this.gameBackground = this.add.tileSprite(0, 0, 5020, this.scale.height, 'levelBG1').setOrigin(0, 0);
+    create(data) {
+        this.returnTo = data?.returnTo || this.scene.key;
+        this.gameBackground = this.add.tileSprite(0, 0, 10020, this.scale.height, 'levelBG3').setOrigin(0, 0);
 
-        // Button setup function
-        const setupButton = (button, originalScale, targetScene) => {
-            button.setScale(originalScale).setInteractive();
+        this.setupUIButtons();
 
-            button.on('pointerover', () => {
-                button.setScale(originalScale * 1.1);
-            });
-
-            button.on('pointerout', () => {
-                button.setScale(originalScale);
-                button.clearTint();
-            });
-
-            button.on('pointerdown', () => {
-                button.setTint(0x999999);
-                this.sound.play('clickSFX', { volume: 0.5 });
-
-                this.time.delayedCall(150, () => {
-                    if (targetScene) this.scene.start(targetScene);
-                });
-            });
-
-            button.on('pointerup', () => {
-                button.clearTint();
-            });
-
-            return button;  
-        };
-
-        const retryBtnImage = this.add.image(this.scale.width - 120, 40, 'gameRetry');
-        this.retryBtn = setupButton(retryBtnImage, 0.12, null);
-        this.retryBtn.setScrollFactor(0);
-        this.retryBtn.on('pointerdown', () => {
-            this.scene.restart();
-        });
-
-        const pauseBtnImage = this.add.image(this.scale.width - 60, 40, 'gamePause');
-        this.pauseBtn = setupButton(pauseBtnImage, 0.12, null);
-        this.pauseBtn.setScrollFactor(0);
-        this.pauseBtn.on('pointerdown', () => {
-            this.pauseGame();
-        });
-
-        // Platforms with gaps
         this.platforms = this.physics.add.staticGroup();
-
-        const groundSpecs = [
-            [100, 610, 1000],
-            [1000, 610, 400],
-            [1820, 610, 800],
-            [2700, 610, 600],
-            [4130, 610, 1800]
-        ];
-
-        groundSpecs.forEach(([x, y, width]) => {
-            const ground = this.add.tileSprite(x, y, width, 120, 'ground');
-            this.physics.add.existing(ground, true);
-            this.platforms.add(ground);
-        });
-
-        const obstacle1 = this.add.tileSprite(4130, 530, 310, 120, 'ground');
-        this.physics.add.existing(obstacle1, true);
-        this.platforms.add(obstacle1);
+        this.createGround();
 
         // Player
-        const frames = this.anims.create({
+                const frames = this.anims.create({
             key: 'run',
             frames: this.anims.generateFrameNames('character', {
                 prefix: 'frame',
@@ -81,7 +22,7 @@ class levelOne extends Phaser.Scene {
                 suffix: '.png',
                 zeroPad: 4
             }),
-            frameRate: 33,
+            frameRate: 24,
             repeat: -1
         });
         console.log(frames);
@@ -91,39 +32,38 @@ class levelOne extends Phaser.Scene {
             .setScale(0.3);
 
         this.cameras.main.startFollow(this.player);
-        this.cameras.main.setBounds(0, 0, 5020, this.scale.height);
-        this.physics.world.setBounds(0, 0, 5020, this.scale.height);
+        this.cameras.main.setBounds(0, 0, 10020, this.scale.height);
+        this.physics.world.setBounds(0, 0, 10020, this.scale.height);
 
-        // Collisions
-        this.physics.add.collider(this.player, this.platforms);
-
-        // Kill zone
-        this.deathZone = this.add.rectangle(2500, this.scale.height + 10, 5000, 30, 0xff0000, 0);
-        this.physics.add.existing(this.deathZone, true);
-        this.physics.add.overlap(this.player, this.deathZone, this.onPlayerDeath, null, this);
-
-        // Win object
-        this.winObject = this.physics.add.sprite(4964.13, 530, 'object').setImmovable(true).setScale(1);
+        // Win Object
+        this.winObject = this.physics.add.sprite(9980.8, 530.8, 'object')
+            .setImmovable(true)
+            .setScale(0.1);
         this.winObject.body.setAllowGravity(false);
         this.physics.add.overlap(this.player, this.winObject, this.onPlayerWin, null, this);
 
-        // Controls
+        this.physics.add.collider(this.player, this.platforms);
+
+        this.deathZone = this.add.rectangle(5000, this.scale.height + 10, 10000, 30, 0xff0000, 0);
+        this.physics.add.existing(this.deathZone, true);
+        this.physics.add.overlap(this.player, this.deathZone, this.onPlayerDeath, null, this);
+
         this.keys = this.input.keyboard.addKeys({
             up: Phaser.Input.Keyboard.KeyCodes.W,
             left: Phaser.Input.Keyboard.KeyCodes.A,
-            down: Phaser.Input.Keyboard.KeyCodes.S,
             right: Phaser.Input.Keyboard.KeyCodes.D
         });
 
         this.isGameOver = false;
+        this.justJumped = false;
 
+        // Music Player
         let currentMusic = this.registry.get('currentMusic');
-        if (currentMusic && currentMusic.isPlaying && currentMusic.key !== 'gameMusic1') {
+        if (currentMusic && currentMusic.isPlaying && currentMusic.key !== 'gameMusic3') {
             currentMusic.stop();
         }
-
-        if (!currentMusic || currentMusic.key !== 'gameMusic1') {
-            currentMusic = this.sound.add('gameMusic1', { loop: true, volume: 0.3 });
+        if (!currentMusic || currentMusic.key !== 'gameMusic3') {
+            currentMusic = this.sound.add('gameMusic3', { loop: true, volume: 0.3 });
             currentMusic.play();
             this.registry.set('currentMusic', currentMusic);
         } else if (!currentMusic.isPlaying) {
@@ -131,6 +71,57 @@ class levelOne extends Phaser.Scene {
         }
     }
 
+    // Button Functions
+    setupUIButtons() {
+        const setupButton = (button, originalScale, targetScene, callback) => {
+            button.setScale(originalScale).setInteractive();
+
+            button.on('pointerover', () => button.setScale(originalScale * 1.1));
+            button.on('pointerout', () => {
+                button.setScale(originalScale);
+                button.clearTint();
+            });
+            button.on('pointerdown', () => {
+                button.setTint(0x999999);
+                this.sound.play('clickSFX', { volume: 0.5 });
+                this.time.delayedCall(150, () => {
+                    if (callback) callback();
+                    if (targetScene) this.scene.start(targetScene);
+                });
+            });
+            button.on('pointerup', () => button.clearTint());
+        };
+
+        this.retryBtn = this.add.image(this.scale.width - 120, 40, 'gameRetry').setScrollFactor(0);
+        setupButton(this.retryBtn, 0.12, null, () => this.scene.restart());
+
+        this.pauseBtn = this.add.image(this.scale.width - 60, 40, 'gamePause').setScrollFactor(0);
+        setupButton(this.pauseBtn, 0.12, null, () => this.pauseGame());
+    }
+
+    // Ground platforms
+    createGround() {
+        const groundSpecs = [
+            [100, 610, 1000], [1150, 610, 400], [1600, 610, 800], [2500, 610, 600],
+            [3200, 610, 1000], [4300, 610, 600], [5100, 610, 700], [6000, 610, 500],
+            [6700, 610, 1200], [8100, 610, 400], [8600, 610, 600], [8800, 610, 800],
+            [9000, 610, 400], [9720, 610, 600]
+        ];
+
+        groundSpecs.forEach(([x, y, width]) => {
+            const ground = this.add.tileSprite(x, y, width, 120, 'ground');
+            this.physics.add.existing(ground, true);
+            this.platforms.add(ground);
+        });
+    }
+
+    // Pause Logic
+    pauseGame() {
+        this.scene.launch('pauseMenuScene', { returnTo: this.scene.key });
+        this.scene.pause();
+    }
+
+    // Lose condition
     onPlayerDeath() {
         if (this.isGameOver) return;
         this.isGameOver = true;
@@ -183,7 +174,7 @@ class levelOne extends Phaser.Scene {
         );
 
         retryButton.on('pointerdown', () => {
-            this.scene.start('levelOne');
+            this.scene.start('levelThree');
         });
 
         const mainMenuButton = this.add.text(this.cameras.main.scrollX + this.scale.width / 2, 365, 'Return to Main Menu', {
@@ -208,6 +199,7 @@ class levelOne extends Phaser.Scene {
         });
     }
 
+    // Win condition
     onPlayerWin() {
         if (this.isGameOver) return;
         this.isGameOver = true;
@@ -242,28 +234,7 @@ class levelOne extends Phaser.Scene {
             20
         );
 
-        const nextLevelButton = this.add.text(this.cameras.main.scrollX + this.scale.width / 2, 300, 'Next Level', {
-            fontFamily: 'Agency FB',
-            fontSize: '28px',
-            color: '#ffffff',
-            padding: { x: 20, y: 10 }
-        }).setOrigin(0.5).setInteractive().setDepth(1);
-
-        const nextBG = this.add.graphics().setDepth(0);
-        nextBG.fillStyle(0x004dff, 1);
-        nextBG.fillRoundedRect(
-            nextLevelButton.getBounds().x,
-            nextLevelButton.getBounds().y,
-            nextLevelButton.width,
-            nextLevelButton.height,
-            15
-        );
-
-        nextLevelButton.on('pointerdown', () => {
-            this.scene.start('levelTwo');
-        });
-
-        const menuButton = this.add.text(this.cameras.main.scrollX + this.scale.width / 2, 365, 'Return to Main Menu', {
+        const mainMenuButton = this.add.text(this.cameras.main.scrollX + this.scale.width / 2, 300, 'Return to Main Menu', {
             fontFamily: 'Agency FB',
             fontSize: '28px',
             color: '#ffffff',
@@ -273,21 +244,16 @@ class levelOne extends Phaser.Scene {
         const menuBG = this.add.graphics().setDepth(0);
         menuBG.fillStyle(0xa10000, 1);
         menuBG.fillRoundedRect(
-            menuButton.getBounds().x,
-            menuButton.getBounds().y,
-            menuButton.width,
-            menuButton.height,
+            mainMenuButton.getBounds().x,
+            mainMenuButton.getBounds().y,
+            mainMenuButton.width,
+            mainMenuButton.height,
             15
         );
 
-        menuButton.on('pointerdown', () => {
+        mainMenuButton.on('pointerdown', () => {
             this.scene.start('mainMenu');
         });
-    }
-
-    pauseGame() {
-        this.scene.launch('pauseMenuScene', { returnTo: this.scene.key });
-        this.scene.pause();
     }
 
     update() {
